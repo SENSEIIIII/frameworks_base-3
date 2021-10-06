@@ -650,6 +650,18 @@ public class UdfpsController implements DozeReceiver {
 
         final UdfpsOverlayController mUdfpsOverlayController = new UdfpsOverlayController();
         mFingerprintManager.setUdfpsOverlayController(mUdfpsOverlayController);
+        mCoreLayoutParams = new WindowManager.LayoutParams(
+                WindowManager.LayoutParams.TYPE_DISPLAY_OVERLAY,
+                0 /* flags set in computeLayoutParams() */,
+                PixelFormat.TRANSLUCENT);
+        mCoreLayoutParams.setTitle(TAG);
+        mCoreLayoutParams.setFitInsetsTypes(0);
+        mCoreLayoutParams.gravity = Gravity.TOP | Gravity.LEFT;
+        mCoreLayoutParams.layoutInDisplayCutoutMode =
+                WindowManager.LayoutParams.LAYOUT_IN_DISPLAY_CUTOUT_MODE_ALWAYS;
+        mCoreLayoutParams.privateFlags = WindowManager.LayoutParams.PRIVATE_FLAG_TRUSTED_OVERLAY;
+
+        mFingerprintManager.setUdfpsOverlayController(new UdfpsOverlayController());
 
         final IntentFilter filter = new IntentFilter();
         filter.addAction(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);

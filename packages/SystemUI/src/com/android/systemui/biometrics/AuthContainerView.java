@@ -730,6 +730,7 @@ public class AuthContainerView extends LinearLayout
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 WindowManager.LayoutParams.TYPE_STATUS_BAR_ADDITIONAL,
+                WindowManager.LayoutParams.TYPE_DISPLAY_OVERLAY,
                 windowFlags,
                 PixelFormat.TRANSLUCENT);
         lp.privateFlags |= WindowManager.LayoutParams.SYSTEM_FLAG_SHOW_FOR_ALL_USERS;
