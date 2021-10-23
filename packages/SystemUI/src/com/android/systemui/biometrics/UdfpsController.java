@@ -165,6 +165,8 @@ public class UdfpsController implements DozeReceiver {
     private boolean mOnFingerDown;
     private boolean mAttemptedToDismissKeyguard;
     private final Set<Callback> mCallbacks = new HashSet<>();
+    private final int mUdfpsVendorCode;
+    private Set<Callback> mCallbacks = new HashSet<>();
 
     @VisibleForTesting
     public static final VibrationAttributes VIBRATION_ATTRIBUTES =
@@ -292,6 +294,17 @@ public class UdfpsController implements DozeReceiver {
         if (sensorId != mSensorId) {
             mSensorId = sensorId;
             Log.w(TAG, "updateUdfpsParams | sensorId has changed");
+        @Override
+        public void onAcquired(int sensorId, int acquiredInfo, int vendorCode) {
+            mFgExecutor.execute(() -> {
+                if (acquiredInfo == 6 && (mStatusBarStateController.isDozing() || !mScreenOn)) {
+                    if (vendorCode == mUdfpsVendorCode) {
+                        mPowerManager.wakeUp(mSystemClock.uptimeMillis(),
+                                PowerManager.WAKE_REASON_GESTURE, TAG);
+                        onAodInterrupt(0, 0, 0, 0); // To-Do pass proper values
+                    }
+                }
+            });
         }
 
         if (!mOverlayParams.equals(overlayParams)) {
@@ -659,6 +672,7 @@ public class UdfpsController implements DozeReceiver {
 
         udfpsHapticsSimulator.setUdfpsController(this);
         udfpsShell.setUdfpsOverlayController(mUdfpsOverlayController);
+        mUdfpsVendorCode = mContext.getResources().getInteger(R.integer.config_udfpsVendorCode);
     }
 
     /**
